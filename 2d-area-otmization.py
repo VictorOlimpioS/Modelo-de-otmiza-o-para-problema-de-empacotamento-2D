@@ -1,35 +1,27 @@
 import math
 
 
-# bigAreaWidth = 30
-# bigAreaHeight = 150
-# boxWidth= 30
-# boxHeight = 50
-
+def get_dimensions(content):
+    while True:
+        try:
+            dimension = int(input(f'Digite a {content} do item: '))
+            if dimension <= 0:
+                print(f"A {content} deve ser maior que zero.")
+            else:
+                return dimension
+        except ValueError:
+            print(f'Erro! Digite uma {content} válida.')
 
 while True:
-    boxHeight = int(input('digite a altura do item: '))
-    if(int(boxHeight) <= 0):
-        boxHeight = int(input('Erro! digite uma altura Válida: '))
+    containerHeight = get_dimensions('altura do container')
+    containerWidth = get_dimensions('largura do container')
+    objectHeight = get_dimensions('altura do objeto')
+    objectWidth = get_dimensions('largura do objeto')
 
-    boxWidth = int(input('digite a largura do item: '))
-    if(int(boxWidth) <= 0):
-        boxWidth = int(input('Erro! digite uma largura Válida: '))
+    if((objectHeight > containerHeight and objectHeight > containerWidth) or ( objectWidth > containerHeight and objectWidth > containerWidth)):
+        print('Erro! A área não comporta o item')
 
-    bigAreaHeight = int(input('digite a altura da área: '))
-    if(int(bigAreaHeight) <= 0):
-        bigAreaHeight = int(input('Erro! digite uma altura Válida: '))
 
-    bigAreaWidth = int(input('digite a largura da área: '))
-    if(int(bigAreaWidth) <= 0):
-        bigAreaWidth = int(input('Erro! digite uma largura Válida: '))
-
-    if((boxHeight > bigAreaHeight or boxHeight > bigAreaWidth or boxWidth > bigAreaHeight or boxWidth > bigAreaWidth) and bigAreaWidth == bigAreaHeight ):
-        print('A área não comporta o item')
-        break 
-    if((boxHeight > bigAreaHeight and boxHeight > bigAreaWidth) or( boxWidth > bigAreaHeight and boxWidth > bigAreaWidth) ):
-        print('A área não comporta o item')
-        break 
 
 
     ## encontrando melhor layout inicial
@@ -38,15 +30,15 @@ while True:
     partHeightToHeight = 0
     partWidthToWidth = 0
 
-    partHeightToHeight = math.floor(bigAreaHeight/boxHeight)
-    partWidthToWidth = math.floor(bigAreaWidth/boxWidth)
+    partHeightToHeight = math.floor(containerHeight/objectHeight)
+    partWidthToWidth = math.floor(containerWidth/objectWidth)
 
     ## Layout 1
     partHeightToWidth = 0
     partWidthToHeight = 0
-    if(boxHeight != boxWidth):
-        partHeightToWidth = math.floor(bigAreaHeight/boxWidth)
-        partWidthToHeight = math.floor(bigAreaWidth/boxHeight)
+    if(objectHeight != objectWidth):
+        partHeightToWidth = math.floor(containerHeight/objectWidth)
+        partWidthToHeight = math.floor(containerWidth/objectHeight)
 
 
     ## Guardando os valores dos layouts em variáveis 
@@ -60,41 +52,64 @@ while True:
 
     if (layout1 >= layout2):
         layoutMatrix1 = {'height': partHeightToHeight, 'width': partWidthToWidth}
-        widthBoxes = bigAreaWidth - (layoutMatrix1['width'] * boxWidth)
-        HeightBoxes = bigAreaHeight - (layoutMatrix1['height'] * boxHeight)
+        widthBoxes = containerWidth - (layoutMatrix1['width'] * objectWidth)
+        HeightBoxes = containerHeight - (layoutMatrix1['height'] * objectHeight)
         print(layoutMatrix1, widthBoxes, HeightBoxes)
-        if(boxWidth <= HeightBoxes):
-            newLayout = int(HeightBoxes/boxWidth)
-            layoutComplement = newLayout * layoutMatrix1['height']
-            layoutComplementMatrix = {'height': newLayout, 'width': layoutMatrix1['height']}
+        if(objectWidth <= HeightBoxes):
+            newLayout = int(HeightBoxes/objectWidth)
+            layoutComplement =  math.floor(containerWidth/objectHeight)
+            layoutComplementMatrix = {'height':newLayout , 'width':layoutComplement }
             totalResult = layout1 + layoutComplement
             matrixResult = layoutMatrix1
-
-
-            
+            print('Total de objetos: ', totalResult, '\nLayout 1--> ',matrixResult,'Altura do objeto paralela a altura da caixa\n', "Layout complementar--> ", layoutComplementMatrix, ' Posição do item  contrária a orientação do layout 1')
+            break
+        elif(objectHeight <= widthBoxes):
+            print('aqui')
+            newLayout = int(widthBoxes/objectHeight)
+            layoutComplement = math.floor(containerHeight/objectWidth)
+            layoutComplementMatrix = {'height': layoutComplement, 'width': newLayout}
+            totalResult = layout1 + layoutComplement
+            matrixResult = layoutMatrix1
+            print('Total de objetos: ', totalResult, '\nLayout 1--> ',matrixResult,' Altura do objeto paralela a altura da caixa\n', "Layout complementar--> ", layoutComplementMatrix, ' Posição do item  contrária a orientação do layout 1')
+            break
         else: 
             totalResult = layout1
             matrixResult = layoutMatrix1
+            print('Total de objetos: ', totalResult, '\nLayout 1--> ',matrixResult, ' Altura do objeto paralela a altura da caixa')
+            break
+
 
     else:
         layoutMatrix2 = {'height': partHeightToWidth, 'width': partWidthToHeight}
-        widthBoxes = bigAreaWidth - (layoutMatrix2['width'] * boxHeight)
-        HeightBoxes = bigAreaHeight - (layoutMatrix2['height'] * boxWidth)
+        widthBoxes = containerWidth - (layoutMatrix2['width'] * objectHeight)
+        HeightBoxes = containerHeight - (layoutMatrix2['height'] * objectWidth)
         print(layoutMatrix2, widthBoxes, HeightBoxes)
-        if(boxWidth <= widthBoxes):
-            newLayout = int(widthBoxes/boxWidth)
-            layoutComplement = newLayout * layoutMatrix2['width']
-            layoutComplementMatrix = {'height': layoutMatrix2['width'], 'width': newLayout}
+        if(objectHeight <= HeightBoxes):
+            newLayout = int(HeightBoxes/objectHeight)
+            layoutComplement = math.floor(containerWidth/objectWidth)
+            layoutComplementMatrix = {'height': newLayout, 'width': layoutComplement}
             totalResult = layout2 + layoutComplement
             matrixResult = layoutMatrix2
+            print('Total de objetos: ', totalResult, '\nLayout 2--> ',matrixResult,' Altura do objeto perpendicular a altura da caixa\n', "Layout complementar--> ", layoutComplementMatrix, ' Posição do item  contrária a orientação do layout 2')
+            break
+        elif(objectWidth <= widthBoxes):
+            newLayout = int(widthBoxes/objectWidth)
+            layoutComplement = math.floor(containerHeight/objectHeight)
+            layoutComplementMatrix = {'height': layoutComplement, 'width':newLayout}
+            totalResult = layout2 + layoutComplement
+            matrixResult = layoutMatrix2
+            print('Total de objetos: ', totalResult, '\nLayout 2--> ',matrixResult,' Altura do objeto perpendicular a altura da caixa\n', "Layout complementar--> ", layoutComplementMatrix, ' Posição do item  contrária a orientação do layout 1')
+            break
         else: 
             totalResult = layout2 
             matrixResult = layoutMatrix2
+            print('Total de objetos: ', totalResult, '\nLayout 2--> ',matrixResult, ' Altura do objeto perpendicular a altura da caixa')
+            break
+
 
         
         
         
-print(totalResult, matrixResult) 
 
 
         
